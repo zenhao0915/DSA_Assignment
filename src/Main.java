@@ -1,21 +1,20 @@
-import java.util.*;
+import java.util.Scanner;
 
 public class Main {
-    private static Graph graphManager = new Graph();
-    private static RoutePlanner routePlanner = new RoutePlanner(Graph.graphMap);
-    private static Scanner scanner = new Scanner(System.in);
-    private static List<User> userDatabase = new ArrayList<>();
+    private static final Graph graphManager = new Graph();
+    private static final RoutePlanner routePlanner = new RoutePlanner(Graph.graphMap);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        // 初始化一些测试账号 (可以根据需要修改)
-        userDatabase.add(new User("admin", "admin123", true));
-        userDatabase.add(new User("user", "user123", false));
+        User.userDatabase = FileManager.INSTANCE.loadUsers(); //let the data 互通
+        if (User.userDatabase.isEmpty()) {
+            User.userDatabase.add(new User("admin", "admin123", true));
+            User.userDatabase.add(new User("user", "user123", false));
+        }
+        System.out.println("=================================================");
+        System.out.println("    Welcome to Generic Train Management System   ");
+        System.out.println("=================================================");
 
-        System.out.println("=======================================");
-        System.out.println("  Welcome to Metro Management System   ");
-        System.out.println("=======================================");
-
-        // 1. 登录逻辑
         User loggedInUser = handleLogin();
         if (loggedInUser == null) {
             System.out.println("Exiting System. Goodbye!");
@@ -23,9 +22,9 @@ public class Main {
         }
 
         User.currentUser = loggedInUser;
-        System.out.println("\nLogin Successfu  l! Welcome, " + loggedInUser.userName());
+        FileManager.INSTANCE.saveUsers(User.userDatabase);
+        System.out.println("\nLogin Successful! Welcome, " + loggedInUser.userName());
 
-        // 2. 主菜单循环
         boolean running = true;
         while (running) {
             if (loggedInUser.isAdmin()) {
@@ -38,25 +37,49 @@ public class Main {
                 running = handleUserChoice(choice);
             }
         }
+
+        FileManager.INSTANCE.saveUsers(User.userDatabase);
     }
 
     // 处理登录
     private static User handleLogin() {
-        System.out.print("Enter Username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter Password: ");
-        String password = scanner.nextLine();
-
-        for (User u : userDatabase) {
-            if (u.userName().equals(username) && u.password().equals(password)) {
-                return u;
+        String username, password;
+        User tempUser = null;
+        while (true) {
+            System.out.println("""
+                    1. Register User
+                    2. Login User
+                    3. Exit
+                    """);
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear Buffer
+            if (choice < 0 || choice > 3) {
+                System.out.println("Invalid choice. Please try again.");
+                return null;
             }
+            switch (choice) {
+                case 1, 2: {
+                    System.out.print("Enter Username: ");
+                    username = scanner.nextLine();
+                    System.out.print("Enter Password: ");
+                    password = scanner.nextLine();
+                    User adminCheckUser = User.getUserByName(username);
+                    tempUser = new User(username, password, adminCheckUser != null && adminCheckUser.isAdmin());
+                    break;
+                }
+                default: {
+                    System.out.println("System Exiting...");
+                    System.exit(0);
+                    break;
+                }
+            }
+            if (!User.userDatabase.contains(tempUser) && choice == 1) User.userDatabase.add(tempUser);
+            if (tempUser.isValid() || choice == 1) break;
+            else System.out.println("[Error] Invalid Username or Password!");
         }
-        System.out.println("[Error] Invalid Username or Password!");
-        return null;
+        return tempUser;
     }
 
-    // Admin 菜单
     private static void showAdminMenu() {
         System.out.println("\n========== ADMIN MENU ==========");
         System.out.println("1. View Station Network");
@@ -70,7 +93,6 @@ public class Main {
         System.out.print("Choose an option: ");
     }
 
-    // 普通 User 菜单
     private static void showUserMenu() {
         System.out.println("\n========== USER MENU ==========");
         System.out.println("1. View Station Network");
@@ -87,7 +109,6 @@ public class Main {
         }
     }
 
-    // Admin 功能分支
     private static boolean handleAdminChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
@@ -106,7 +127,6 @@ public class Main {
         return true;
     }
 
-    // 普通 User 功能分支
     private static boolean handleUserChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
@@ -119,8 +139,6 @@ public class Main {
         }
         return true;
     }
-
-    // --- 图操作交互输入 ---
 
     private static void handleAddVertex() {
         System.out.println("\n== Add New Station ==");
