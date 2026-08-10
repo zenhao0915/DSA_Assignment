@@ -1,8 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 public class FileManager {
     public static FileManager INSTANCE = new FileManager();
@@ -16,16 +15,44 @@ public class FileManager {
             file.createNewFile();
             Graph.graphMap.forEach((k, v) -> {
                 StringBuilder edgeString = new StringBuilder();
-                v.edge.forEach(edge -> edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive));
-                if (v.edge.size() > 1 && currentCount < v.edge.size())
-                    edgeString.append("|"); // To Split If More Than 1 Edge
+                v.edge.forEach(edge -> {
+                    edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive);
+                    if (v.edge.size() > 1 && currentCount <= v.edge.size()) {
+                        edgeString.append("/"); // To Split If More Than 1 Edge
+                    }
+                    currentCount++;
+                });
                 writeDataToFile(file, v.stationID, v.stationName, String.valueOf(v.isWorking), edgeString.toString());
-                currentCount++;
             });
         } catch (Exception e) {
             System.out.println("[Error] File I/O Caused Unexpected Error!");
             e.fillInStackTrace();
         }
+    }
+
+    public Map<String, Vertex> loadGraphFromFile() {
+        Map<String, Vertex> tempGraphMap = new HashMap<>();
+        File file = new File("metro.txt");
+        try {
+            Scanner reader = new Scanner(file);
+            while (reader.hasNextLine()) {
+                String[] data = reader.nextLine().split(","); //StationID, StationName, IsWorking, List<Edge>
+                List<Edge> edges = new ArrayList<>();
+                if (data.length > 3) {
+                    for (String parent : data[3].split("/")) {
+                        String[] childString = parent.split(":");
+                        edges.add(new Edge(childString[0], Integer.parseInt(childString[1]), Boolean.parseBoolean(childString[2])));
+                    }
+                }
+                Vertex vertex = new Vertex(data[0], data[1], Boolean.parseBoolean(data[2]), edges);
+                tempGraphMap.put(data[0], vertex);
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.fillInStackTrace();
+        }
+        return tempGraphMap;
+
     }
 
     public void saveUsers(HashSet<User> userSet) {
@@ -67,7 +94,9 @@ public class FileManager {
         for (String data : stringVar) {
             stringBuilder.append(data).append(",");
         }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1); // Remove Last String Of ,
+        if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1); // Remove Last String Of ,
+        }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             writer.write(stringBuilder.toString());
             writer.newLine();

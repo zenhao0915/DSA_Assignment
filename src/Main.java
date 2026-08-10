@@ -7,6 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
         User.userDatabase = FileManager.INSTANCE.loadUsers(); //let the data 互通
+        Graph.graphMap = FileManager.INSTANCE.loadGraphFromFile();
+        System.out.println(Graph.graphMap.size());
         if (User.userDatabase.isEmpty()) {
             User.userDatabase.add(new User("admin", "admin123", true));
             User.userDatabase.add(new User("user", "user123", false));

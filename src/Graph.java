@@ -4,21 +4,18 @@ public class Graph {
     public static Map<String, Vertex> graphMap = new HashMap<>();
 
     public boolean addVertex(String stationID, String stationName, boolean isWorking) {
-        for (Vertex vertex: graphMap.values()) {
-            if (Objects.equals(vertex.stationID, stationID)) {
-                System.out.println("[Error] Station Already Exists!");
-                return false;
-            }
-            graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
-            FileManager.INSTANCE.saveGraphToFile();
-            System.out.println("[Success] Station Added Successfully!");
-            return true;
+        if (graphMap.values().stream().anyMatch(v -> Objects.equals(v.stationID, stationID))) {
+            System.out.println("[Error] Station Already Exists!");
+            return false;
         }
-        return false;
+        graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
+        FileManager.INSTANCE.saveGraphToFile();
+        System.out.println("[Success] Station Added Successfully!");
+        return true;
     }
 
     public boolean addEdge(String stationID, String destID, int time) {
-        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, stationID)) && graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, destID))) {
+        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, stationID)) || graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, destID))) {
             System.out.println("[Error] One/Two Of The Station Do Not Exists!");
             return false;
         }
