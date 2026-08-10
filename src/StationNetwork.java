@@ -6,7 +6,7 @@ public class StationNetwork {
         }
         System.out.println("""
                 =======================================
-                         Metro Station Network
+                     Generic Train Station Network
                 =======================================
                 """);
         Graph.graphMap.forEach((stationID, vertex) -> {
