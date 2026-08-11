@@ -10,7 +10,7 @@ public class StationNetwork {
                 =======================================
                 """);
         Graph.graphMap.forEach((stationID, vertex) -> {
-            System.out.println("StationID: " + vertex.stationID);
+            System.out.println("\nStationID: " + vertex.stationID);
             System.out.println("Station Name: " + vertex.stationName);
             String status = vertex.isWorking ? "Working" : "Under Maintenance";
             System.out.println("Status: " + status);
@@ -23,7 +23,9 @@ public class StationNetwork {
                 System.out.println("No Connections!");
             } else {
                 vertex.edge.forEach(edge -> {
-                    String destName = Graph.graphMap.get(edge.destID).stationName;
+                    Vertex tempVertex = Graph.graphMap.get(edge.destID);
+                    if (tempVertex == null) return;
+                    String destName = vertex.stationName;
                     String trackStatus = edge.isActive ? "Active" : "Inactive";
 
                     System.out.println("---> To: " + destName + "(" + edge.destID + ")");
