@@ -1,14 +1,7 @@
 import java.util.*;
 
 public class RoutePlanner {
-
-    private final Map<String, Vertex> graph;
-
-    public RoutePlanner(Map<String, Vertex> graph) {
-        this.graph = graph;
-    }
-
-    public void RoutePlanning() {
+    public void RoutePlanning(Map<String, Vertex> graph) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter origin station: ");
@@ -16,8 +9,8 @@ public class RoutePlanner {
         System.out.print("Enter destination station: ");
         String destName = scanner.nextLine();
 
-        Vertex originVertex = findVertexByName(originName);
-        Vertex destVertex = findVertexByName(destName);
+        Vertex originVertex = findVertexByName(graph, originName);
+        Vertex destVertex = findVertexByName(graph, destName);
 
         if (originVertex == null || destVertex == null) {
             System.out.println("One or Both stations do not exist.");
@@ -31,8 +24,8 @@ public class RoutePlanner {
             return;
         }
 
-        double totalTime = CalculateTotalTime(path);
-        DisplayRoute(path, totalTime);
+        double totalTime = CalculateTotalTime(graph, path);
+        DisplayRoute(graph, path, totalTime);
     }
 
     public List<String> BFS_findRoute(Map<String, Vertex> graph, String originID, String destinationID) {
@@ -61,14 +54,14 @@ public class RoutePlanner {
                 continue;
             }
 
-            Vertex currentVertex = findVertexByID(currentID);
+            Vertex currentVertex = findVertexByID(graph, currentID);
             if (currentVertex == null) continue;
             if (!currentVertex.isWorking) continue;
 
             for (Edge edge : currentVertex.edge) {
                 if (!edge.isActive) continue;
 
-                Vertex neighborVertex = findVertexByID(edge.destID);
+                Vertex neighborVertex = findVertexByID(graph, edge.destID);
 
                 if (neighborVertex == null) {
                     continue;
@@ -106,11 +99,11 @@ public class RoutePlanner {
         return path;
     }
 
-    public double CalculateTotalTime(List<String> path) {
+    public double CalculateTotalTime(Map<String, Vertex> graph, List<String> path) {
         double totalTime = 0;
 
         for (int i = 0; i <= path.size() - 2; i++) {
-            Vertex currentVertex = findVertexByID(path.get(i));
+            Vertex currentVertex = findVertexByID(graph, path.get(i));
             if (currentVertex == null) continue;
             Edge edge = findEdgeByDestID(currentVertex, path.get(i + 1));
             if (edge == null) continue;
@@ -119,11 +112,11 @@ public class RoutePlanner {
         return totalTime;
     }
 
-    public void DisplayRoute(List<String> path, double totalTime) {
+    public void DisplayRoute(Map<String, Vertex> graph, List<String> path, double totalTime) {
         System.out.println("Best route found: ");
 
         for (int i = 0; i <= path.size() - 1; i++) {
-            Vertex stationVertex = findVertexByID(path.get(i));
+            Vertex stationVertex = findVertexByID(graph, path.get(i));
             if (stationVertex == null) continue;
 
             if (i == path.size() - 1) {
@@ -139,14 +132,14 @@ public class RoutePlanner {
         System.out.println("Estimated Arrival Time: " + totalTime + " minutes");
     }
 
-    private Vertex findVertexByName(String name) {
+    private Vertex findVertexByName(Map<String, Vertex> graph, String name) {
         for (Vertex v : graph.values()) {
             if (v.stationName.equals(name)) return v;
         }
         return null;
     }
 
-    private Vertex findVertexByID(String id) {
+    private Vertex findVertexByID(Map<String, Vertex> graph, String id) {
         for (Vertex v : graph.values()) {
             if (v.stationID.equals(id)) return v;
         }

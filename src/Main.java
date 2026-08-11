@@ -2,13 +2,13 @@ import java.util.Scanner;
 
 public class Main {
     private static final Graph graphManager = new Graph();
-    private static final RoutePlanner routePlanner = new RoutePlanner(Graph.graphMap);
+    private static final RoutePlanner routePlanner = new RoutePlanner();
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         User.userDatabase = FileManager.INSTANCE.loadUsers(); //let the data 互通
         Graph.graphMap = FileManager.INSTANCE.loadGraphFromFile();
-        System.out.println(Graph.graphMap.size());
+
         if (User.userDatabase.isEmpty()) {
             User.userDatabase.add(new User("admin", "admin123", true));
             User.userDatabase.add(new User("user", "user123", false));
@@ -45,7 +45,7 @@ public class Main {
 
     // 处理登录
     private static User handleLogin() {
-        String username, password;
+        String username = "", password;
         User tempUser = null;
         while (true) {
             System.out.println("""
@@ -71,13 +71,23 @@ public class Main {
                 }
                 default: {
                     System.out.println("System Exiting...");
+                    FileManager.INSTANCE.saveUsers(User.userDatabase);
                     System.exit(0);
                     break;
                 }
             }
-            if (!User.userDatabase.contains(tempUser) && choice == 1) User.userDatabase.add(tempUser);
-            if (tempUser.isValid() || choice == 1) break;
-            else System.out.println("[Error] Invalid Username or Password!");
+
+            if (choice == 1) {
+                if (!tempUser.isValidPassword()) {
+                    System.out.println("[Error] Invalid Password Characters Or Password Less Than 6 Words! Please try again.");
+                } else if (!tempUser.isValidChar(username)) {
+                    System.out.println("[Error] Invalid Username Characters! Please try again.");
+                } else {
+                    User.userDatabase.add(tempUser);
+                }
+            }
+            if (tempUser.isValid()) break;
+            else System.out.println("[Error] Invalid Username or Password!\n");
         }
         return tempUser;
     }
@@ -114,7 +124,7 @@ public class Main {
     private static boolean handleAdminChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
-            case 2 -> routePlanner.RoutePlanning();
+            case 2 -> routePlanner.RoutePlanning(Graph.graphMap);
             case 3 -> handleAddVertex();
             case 4 -> handleAddEdge();
             case 5 -> handleRemoveVertex();
@@ -132,7 +142,7 @@ public class Main {
     private static boolean handleUserChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
-            case 2 -> routePlanner.RoutePlanning();
+            case 2 -> routePlanner.RoutePlanning(Graph.graphMap);
             case 3 -> {
                 System.out.println("Logging out... Goodbye!");
                 return false;
