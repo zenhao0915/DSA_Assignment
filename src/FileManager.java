@@ -5,10 +5,8 @@ import java.util.*;
 
 public class FileManager {
     public static FileManager INSTANCE = new FileManager();
-    private int currentCount = 0;
 
     public void saveGraphToFile() {
-        currentCount = 0;
         File file = new File("metro.txt");
         try {
             if (file.exists()) file.delete();
@@ -16,11 +14,8 @@ public class FileManager {
             Graph.graphMap.forEach((k, v) -> {
                 StringBuilder edgeString = new StringBuilder();
                 v.edge.forEach(edge -> {
-                    edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive);
-                    if (v.edge.size() > 1 && currentCount <= v.edge.size()) {
-                        edgeString.append("/"); // To Split If More Than 1 Edge
-                    }
-                    currentCount++;
+                    edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive)
+                            .append("/");// To Split If More Than 1 Edge
                 });
                 writeDataToFile(file, v.stationID, v.stationName, String.valueOf(v.isWorking), edgeString.toString());
             });
@@ -36,7 +31,11 @@ public class FileManager {
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNextLine()) {
-                String[] data = reader.nextLine().split(","); //StationID, StationName, IsWorking, List<Edge>
+                String line = reader.nextLine();
+                if (line.endsWith("/")) {
+                    line = line.substring(0, line.length() - 1); // Data Cleaning
+                }
+                String[] data =  line.split(","); //StationID, StationName, IsWorking, List<Edge>
                 List<Edge> edges = new ArrayList<>();
                 if (data.length > 3) {
                     for (String parent : data[3].split("/")) {
