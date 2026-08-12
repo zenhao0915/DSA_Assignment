@@ -86,6 +86,10 @@ class Edge {
         this.timeCost = timeCost;
         this.isActive = isActive;
     }
+
+    public String getIDByName(Collection<Vertex> vertex) {
+        return Objects.requireNonNull(vertex.stream().filter(v -> Objects.equals(v.stationID, destID)).findFirst().orElse(null)).stationName;
+    }
 }
 
 class Vertex {

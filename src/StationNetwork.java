@@ -25,10 +25,9 @@ public class StationNetwork {
                 vertex.edge.forEach(edge -> {
                     Vertex tempVertex = Graph.graphMap.get(edge.destID);
                     if (tempVertex == null) return;
-                    String destName = vertex.stationName;
                     String trackStatus = edge.isActive ? "Active" : "Inactive";
 
-                    System.out.println("---> To: " + destName + "(" + edge.destID + ")");
+                    System.out.println("---> To: " + edge.getIDByName(Graph.graphMap.values()) + "(" + edge.destID + ")");
                     System.out.println("     Time: " + edge.timeCost + "mins");
                     System.out.println("     Status: " + trackStatus);
                 });
