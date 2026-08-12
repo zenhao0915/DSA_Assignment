@@ -126,7 +126,7 @@ public class Main {
     private static boolean handleAdminChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
-            case 2 -> routePlanner.RoutePlanning(Graph.graphMap);
+            case 2 -> routePlanner.routePlanning(Graph.graphMap);
             case 3 -> handleAddVertex();
             case 4 -> handleAddEdge();
             case 5 -> handleRemoveVertex();
@@ -144,7 +144,7 @@ public class Main {
     private static boolean handleUserChoice(int choice) {
         switch (choice) {
             case 1 -> StationNetwork.startStationNetwork();
-            case 2 -> routePlanner.RoutePlanning(Graph.graphMap);
+            case 2 -> routePlanner.routePlanning(Graph.graphMap);
             case 3 -> {
                 System.out.println("Logging out... Goodbye!");
                 return false;

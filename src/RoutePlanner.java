@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class RoutePlanner {
-    public void RoutePlanning(Map<String, Vertex> graph) {
+    public void routePlanning(Map<String, Vertex> graph) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter origin station: ");
@@ -17,18 +17,18 @@ public class RoutePlanner {
             return;
         }
 
-        List<String> path = BFS_findRoute(graph, originVertex.stationID, destVertex.stationID);
+        List<String> path = findRouteByBFS(graph, originVertex.stationID, destVertex.stationID);
 
         if (path.isEmpty()) {
             System.out.println("No available route between " + originName + "and " + destName);
             return;
         }
 
-        double totalTime = CalculateTotalTime(graph, path);
-        DisplayRoute(graph, path, totalTime);
+        double totalTime = calculateTotalTime(graph, path);
+        displayRoute(graph, path, totalTime);
     }
 
-    public List<String> BFS_findRoute(Map<String, Vertex> graph, String originID, String destinationID) {
+    public List<String> findRouteByBFS(Map<String, Vertex> graph, String originID, String destinationID) {
         Map<String, Double> distance = new HashMap<>();
         Map<String, String> parent = new HashMap<>();
         PriorityQueue<PQItem> PQ = new PriorityQueue<>(Comparator.comparingDouble(a -> a.time));
@@ -83,10 +83,10 @@ public class RoutePlanner {
             return new ArrayList<>();
         }
 
-        return ReconstructPath(parent, originID, destinationID);
+        return reconstructPath(parent, originID, destinationID);
     }
 
-    public List<String> ReconstructPath(Map<String, String> parent, String originID, String destinationID) {
+    public List<String> reconstructPath(Map<String, String> parent, String originID, String destinationID) {
         List<String> path = new ArrayList<>();
         String currentID = destinationID;
 
@@ -99,7 +99,7 @@ public class RoutePlanner {
         return path;
     }
 
-    public double CalculateTotalTime(Map<String, Vertex> graph, List<String> path) {
+    public double calculateTotalTime(Map<String, Vertex> graph, List<String> path) {
         double totalTime = 0;
 
         for (int i = 0; i <= path.size() - 2; i++) {
@@ -112,7 +112,7 @@ public class RoutePlanner {
         return totalTime;
     }
 
-    public void DisplayRoute(Map<String, Vertex> graph, List<String> path, double totalTime) {
+    public void displayRoute(Map<String, Vertex> graph, List<String> path, double totalTime) {
         System.out.println("Best route found: ");
 
         for (int i = 0; i <= path.size() - 1; i++) {
@@ -120,9 +120,9 @@ public class RoutePlanner {
             if (stationVertex == null) continue;
 
             if (i == path.size() - 1) {
-                System.out.println("stationVertex.stationName");
+                System.out.println(" " + stationVertex.stationName + "\033[0m");
             } else {
-                System.out.println("stationVertex.stationName —>");
+                System.out.print(" \033[1m\u001B[31m" + stationVertex.stationName + " ->");
             }
 
             if (!stationVertex.isWorking) {
