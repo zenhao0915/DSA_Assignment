@@ -9,6 +9,10 @@ record User(String userName, String password, boolean isAdmin) {
         return userDatabase.stream().filter(u -> u.userName.equals(userName)).findFirst().orElse(null);
     }
 
+    public boolean isUserExist() {
+        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName, userName));
+    }
+
     public boolean isValid() {
         return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName, userName) && Objects.equals(u.password, password));
         //check if in user list the user has the correct name and password (valid user in userList)

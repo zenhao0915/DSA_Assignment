@@ -82,6 +82,8 @@ public class Main {
                     System.out.println("[Error] Invalid Password Characters Or Password Less Than 6 Words! Please try again.");
                 } else if (!tempUser.isValidChar(username)) {
                     System.out.println("[Error] Invalid Username Characters! Please try again.");
+                } else if (tempUser.isUserExist()) {
+                    System.out.println("[Error] Username Exist! Please try again.");
                 } else {
                     User.userDatabase.add(tempUser);
                 }
