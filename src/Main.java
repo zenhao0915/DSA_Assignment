@@ -209,7 +209,12 @@ public class Main {
         System.out.print("Enter Station ID: ");
         String id = scanner.nextLine();
         System.out.print("Enter New Status (true for Working / false for Maintenance): ");
-        boolean isWorking = Boolean.parseBoolean(scanner.nextLine());
+        String newStatus = scanner.nextLine();
+        while (!newStatus.equalsIgnoreCase("true") && !newStatus.equalsIgnoreCase("false")) {
+            System.out.println("[Error] Invalid Input! Try again.");
+            newStatus = scanner.nextLine();
+        }
+        boolean isWorking = Boolean.parseBoolean(newStatus);
 
         graphManager.updateStatus(id, isWorking);
     }
