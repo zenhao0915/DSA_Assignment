@@ -208,11 +208,12 @@ public class Main {
         System.out.println("\n== Update Station Status ==");
         System.out.print("Enter Station ID: ");
         String id = scanner.nextLine();
-        System.out.print("Enter New Status (true for Working / false for Maintenance): ");
-        String newStatus = scanner.nextLine();
-        while (!newStatus.equalsIgnoreCase("true") && !newStatus.equalsIgnoreCase("false")) {
-            System.out.println("[Error] Invalid Input! Try again.");
+        String newStatus;
+        while (true) {
+            System.out.print("Enter New Status (true for Working / false for Maintenance): ");
             newStatus = scanner.nextLine();
+            if (newStatus.equalsIgnoreCase("true") || newStatus.equalsIgnoreCase("false")) break;
+            System.out.println("[Error] Invalid Input! Try again.");
         }
         boolean isWorking = Boolean.parseBoolean(newStatus);
 
