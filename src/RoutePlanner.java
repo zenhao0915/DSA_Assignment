@@ -1,26 +1,40 @@
 import java.util.*;
 
 public class RoutePlanner {
+
     public void routePlanning(Map<String, Vertex> graph) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter origin station: ");
+        System.out.print(Main.YELLOW + "Enter origin station ID: " + Main.RESET);
         String originName = scanner.nextLine().trim();
-        System.out.print("Enter destination station: ");
+        System.out.print(Main.YELLOW + "Enter destination station ID: " + Main.RESET);
         String destName = scanner.nextLine().trim();
 
-        Vertex originVertex = findVertexByName(graph, originName);
-        Vertex destVertex = findVertexByName(graph, destName);
+        Vertex originVertex = findVertexByID(graph, originName);
+        Vertex destVertex = findVertexByID(graph, destName);
 
         if (originVertex == null || destVertex == null) {
-            System.out.println("One or Both stations do not exist.");
+            System.out.println(Main.RED + "[Error] One or Both stations do not exist." + Main.RESET);
+            return;
+        }
+
+        if (!originVertex.isWorking && !destVertex.isWorking) {
+            System.out.println(Main.RED + "[Notice] Both origin station (" + originVertex.stationName + ") and destination station (" + destVertex.stationName + ") are under maintenance!" + Main.RESET);
+            return;
+        }
+        if (!originVertex.isWorking) {
+            System.out.println(Main.RED + "[Notice] Origin station " + originVertex.stationName + " (" + originName + ") is currently under maintenance!" + Main.RESET);
+            return;
+        }
+        if (!destVertex.isWorking) {
+            System.out.println(Main.RED + "[Notice] Destination station " + destVertex.stationName + " (" + destName + ") is currently under maintenance!" + Main.RESET);
             return;
         }
 
         List<String> path = findRouteByBFS(graph, originVertex.stationID, destVertex.stationID);
 
         if (path.isEmpty()) {
-            System.out.println("No available route between " + originName + "and " + destName);
+            System.out.println(Main.RED + "No available route between " + originName + " and " + destName + " (Transit tracks closed or intermediate stations under maintenance)." + Main.RESET);
             return;
         }
 
@@ -55,19 +69,13 @@ public class RoutePlanner {
             }
 
             Vertex currentVertex = findVertexByID(graph, currentID);
-            if (currentVertex == null) continue;
-            if (!currentVertex.isWorking) continue;
+            if (currentVertex == null || !currentVertex.isWorking) continue;
 
             for (Edge edge : currentVertex.edge) {
                 if (!edge.isActive) continue;
 
                 Vertex neighborVertex = findVertexByID(graph, edge.destID);
-
-                if (neighborVertex == null) {
-                    continue;
-                }
-
-                if (!neighborVertex.isWorking) continue;
+                if (neighborVertex == null || !neighborVertex.isWorking) continue;
 
                 double newTime = distance.get(currentID) + edge.timeCost;
 
@@ -107,29 +115,25 @@ public class RoutePlanner {
             if (currentVertex == null) continue;
             Edge edge = findEdgeByDestID(currentVertex, path.get(i + 1));
             if (edge == null) continue;
-            totalTime = totalTime + edge.timeCost;
+            totalTime += edge.timeCost;
         }
         return totalTime;
     }
 
     public void displayRoute(Map<String, Vertex> graph, List<String> path, double totalTime) {
-        System.out.println("Best route found: ");
+        System.out.println(Main.GREEN + "\nBest route found: " + Main.RESET);
 
         for (int i = 0; i <= path.size() - 1; i++) {
             Vertex stationVertex = findVertexByID(graph, path.get(i));
             if (stationVertex == null) continue;
 
             if (i == path.size() - 1) {
-                System.out.println(" " + stationVertex.stationName + "\033[0m");
+                System.out.println(Main.BLUE + stationVertex.stationName + Main.RESET);
             } else {
-                System.out.print(" \033[1m\u001B[31m" + stationVertex.stationName + " ->");
-            }
-
-            if (!stationVertex.isWorking) {
-                System.out.println("Note: " + stationVertex.stationName + " is under maintenance");
+                System.out.print(Main.BLUE + stationVertex.stationName + Main.RESET + " -> ");
             }
         }
-        System.out.println("Estimated Arrival Time: " + totalTime + " minutes");
+        System.out.println("Estimated Arrival Time: " + Main.YELLOW + totalTime + " minutes\n" + Main.RESET);
     }
 
     private Vertex findVertexByName(Map<String, Vertex> graph, String name) {

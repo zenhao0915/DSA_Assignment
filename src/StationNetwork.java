@@ -12,7 +12,7 @@ public class StationNetwork {
         Graph.graphMap.forEach((stationID, vertex) -> {
             System.out.println("\nStationID: " + Main.YELLOW + vertex.stationID + Main.RESET);
             System.out.println("Station Name: " + Main.YELLOW + vertex.stationName + Main.RESET);
-            String status = vertex.isWorking ? Main.GREEN + "Working" : Main.RED + "Under Maintenance";
+            String status = vertex.isWorking ? Main.GREEN + "Active" : Main.RED + "Under Maintenance";
             System.out.println("Status: " + status + Main.RESET);
 
             if (!vertex.isWorking) {

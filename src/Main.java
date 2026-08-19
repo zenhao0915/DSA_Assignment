@@ -208,7 +208,7 @@ public class Main {
         String id = scanner.nextLine().trim();
         String newStatus;
         while (true) {
-            System.out.print("Enter New Status (true for Working / false for Maintenance): ");
+            System.out.print("Enter New Status (" + Main.GREEN + "true" + Main.RESET + " for Active / " + Main.RED + "false" + Main.RESET + " for Maintenance): ");
             newStatus = scanner.nextLine().trim();
             if (newStatus.equalsIgnoreCase("true") || newStatus.equalsIgnoreCase("false")) break;
             System.out.println("[Error] Invalid Input! Try again.");
