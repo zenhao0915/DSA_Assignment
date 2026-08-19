@@ -8,6 +8,10 @@ public class Graph {
             System.out.println("[Error] Station Already Exists!");
             return false;
         }
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return false;
+        }
         graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station Added Successfully!");
@@ -17,6 +21,14 @@ public class Graph {
     public boolean addEdge(String stationID, String destID, int time) {
         if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) || graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), destID.toLowerCase()))) {
             System.out.println("[Error] One/Two Of The Station Do Not Exists!");
+            return false;
+        }
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return false;
+        }
+        if (destID.isEmpty()) {
+            System.out.println("[Error] Destination ID Is Empty!");
             return false;
         }
         Edge toDest = new Edge(destID, time, true);
@@ -33,6 +45,10 @@ public class Graph {
             System.out.println("[Error] Station Does Not Exists!");
             return false;
         }
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return false;
+        }
         graphMap.remove(stationID);
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station And Associated Connections Deleted Successfully!");
@@ -40,6 +56,14 @@ public class Graph {
     }
 
     public void removeEdge(String stationID, String destID) {
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return;
+        }
+        if (destID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return;
+        }
         if (graphMap.get(stationID) != null && Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
             graphMap.get(stationID).edge = null;
         }
@@ -51,6 +75,10 @@ public class Graph {
     }
 
     public void updateEdgeStatus(String stationID, boolean isWorking) {
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return;
+        }
         for (Vertex v: graphMap.values()) {
             if (!Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) continue;
             v.edge.forEach(edge -> edge.isActive = isWorking);
@@ -65,6 +93,10 @@ public class Graph {
     }
 
     public boolean updateStatus(String stationID, boolean isWorking) {
+        if (stationID.isEmpty()) {
+            System.out.println("[Error] Station ID Is Empty!");
+            return false;
+        }
         Vertex currentVertex = graphMap.get(stationID);
         if (currentVertex == null) {
             System.out.println("[Error] Station Does Not Exists!");
