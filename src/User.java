@@ -19,7 +19,7 @@ record User(String userName, String password, boolean isAdmin) {
     }
 
     public boolean isValidChar(String content) {
-        return !content.contains("\\");
+        return !content.contains("\\") && !content.isEmpty();
     }
 
     public boolean isUserAdmin() {
