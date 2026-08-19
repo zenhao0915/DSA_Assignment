@@ -70,9 +70,9 @@ public class Main {
             switch (choice) {
                 case 1, 2: {
                     System.out.print("Enter Username: ");
-                    username = scanner.nextLine();
+                    username = scanner.nextLine().trim();
                     System.out.print("Enter Password: ");
-                    password = scanner.nextLine();
+                    password = scanner.nextLine().trim();
                     User adminCheckUser = User.getUserByName(username);
                     tempUser = new User(username, password, adminCheckUser != null && adminCheckUser.isAdmin());
                     break;
@@ -86,9 +86,7 @@ public class Main {
             }
 
             if (choice == 1) {
-                if (!tempUser.isValidPassword()) {
-                    System.out.println("[Error] Invalid Password Characters Or Password Less Than 6 Words! Please try again.");
-                } else if (!tempUser.isValidChar(username)) {
+                if (!tempUser.isValidChar(username)) {
                     System.out.println("[Error] Invalid Username Characters! Please try again.");
                 } else if (tempUser.isUserExist()) {
                     System.out.println("[Error] Username Exist! Please try again.");
@@ -165,9 +163,9 @@ public class Main {
     private static void handleAddVertex() {
         System.out.println("\n== Add New Station ==");
         System.out.print("Enter Station ID: ");
-        String id = scanner.nextLine();
+        String id = scanner.nextLine().trim();
         System.out.print("Enter Station Name: ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
         System.out.print("Is Station Working? (true/false): ");
         boolean isWorking = Boolean.parseBoolean(scanner.nextLine());
 
@@ -177,9 +175,9 @@ public class Main {
     private static void handleAddEdge() {
         System.out.println("\n== Create Connection Between Stations ==");
         System.out.print("Enter Starting Station ID: ");
-        String srcID = scanner.nextLine();
+        String srcID = scanner.nextLine().trim();
         System.out.print("Enter Destination Station ID: ");
-        String destID = scanner.nextLine();
+        String destID = scanner.nextLine().trim();
         System.out.print("Enter Journey Time (minutes): ");
         int time = Integer.parseInt(scanner.nextLine());
 
@@ -189,7 +187,7 @@ public class Main {
     private static void handleRemoveVertex() {
         System.out.println("\n== Delete Station ==");
         System.out.print("Enter Station ID to remove: ");
-        String id = scanner.nextLine();
+        String id = scanner.nextLine().trim();
 
         graphManager.removeVertex(id);
     }
@@ -197,9 +195,9 @@ public class Main {
     private static void handleRemoveEdge() {
         System.out.println("\n== Delete Connection ==");
         System.out.print("Enter Starting Station ID: ");
-        String srcID = scanner.nextLine();
+        String srcID = scanner.nextLine().trim();
         System.out.print("Enter Destination Station ID: ");
-        String destID = scanner.nextLine();
+        String destID = scanner.nextLine().trim();
 
         graphManager.removeEdge(srcID, destID);
     }
@@ -207,11 +205,11 @@ public class Main {
     private static void handleUpdateStatus() {
         System.out.println("\n== Update Station Status ==");
         System.out.print("Enter Station ID: ");
-        String id = scanner.nextLine();
+        String id = scanner.nextLine().trim();
         String newStatus;
         while (true) {
             System.out.print("Enter New Status (true for Working / false for Maintenance): ");
-            newStatus = scanner.nextLine();
+            newStatus = scanner.nextLine().trim();
             if (newStatus.equalsIgnoreCase("true") || newStatus.equalsIgnoreCase("false")) break;
             System.out.println("[Error] Invalid Input! Try again.");
         }

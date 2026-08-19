@@ -6,15 +6,15 @@ record User(String userName, String password, boolean isAdmin) {
     public static User currentUser = null;
 
     public static User getUserByName(String userName) {
-        return userDatabase.stream().filter(u -> u.userName.equals(userName)).findFirst().orElse(null);
+        return userDatabase.stream().filter(u -> u.userName.equalsIgnoreCase(userName)).findFirst().orElse(null);
     }
 
     public boolean isUserExist() {
-        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName, userName));
+        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName.toLowerCase(), userName.toLowerCase()));
     }
 
     public boolean isValid() {
-        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName, userName) && Objects.equals(u.password, password));
+        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName.toLowerCase(), userName.toLowerCase()) && Objects.equals(u.password.toLowerCase(), password.toLowerCase()));
         //check if in user list the user has the correct name and password (valid user in userList)
     }
 
@@ -22,14 +22,10 @@ record User(String userName, String password, boolean isAdmin) {
         return !content.contains("\\");
     }
 
-    public boolean isValidPassword() {
-        return isValidChar(password) && password.length() >= 6;
-    }
-
     public boolean isUserAdmin() {
         boolean found = false;
         for (User u : userDatabase) {           //userName de getter
-            if (u.isAdmin && Objects.equals(u.userName, userName())) {
+            if (u.isAdmin && Objects.equals(u.userName.toLowerCase(), userName().toLowerCase())) {
                 found = true;
                 break;   // so it won't check the rest of the userList
             }

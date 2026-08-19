@@ -4,7 +4,7 @@ public class Graph {
     public static Map<String, Vertex> graphMap = new HashMap<>();
 
     public boolean addVertex(String stationID, String stationName, boolean isWorking) {
-        if (graphMap.values().stream().anyMatch(v -> Objects.equals(v.stationID, stationID))) {
+        if (graphMap.values().stream().anyMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase()))) {
             System.out.println("[Error] Station Already Exists!");
             return false;
         }
@@ -15,7 +15,7 @@ public class Graph {
     }
 
     public boolean addEdge(String stationID, String destID, int time) {
-        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, stationID)) || graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, destID))) {
+        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) || graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), destID.toLowerCase()))) {
             System.out.println("[Error] One/Two Of The Station Do Not Exists!");
             return false;
         }
@@ -29,7 +29,7 @@ public class Graph {
     }
 
     public boolean removeVertex(String stationID) {
-        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID, stationID))) {
+        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase()))) {
             System.out.println("[Error] Station Does Not Exists!");
             return false;
         }
@@ -40,10 +40,10 @@ public class Graph {
     }
 
     public void removeEdge(String stationID, String destID) {
-        if (graphMap.get(stationID) != null && Objects.equals(graphMap.get(stationID).stationID, stationID)) {
+        if (graphMap.get(stationID) != null && Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
             graphMap.get(stationID).edge = null;
         }
-        if (graphMap.get(destID) != null && Objects.equals(graphMap.get(destID).stationID, destID)) {
+        if (graphMap.get(destID) != null && Objects.equals(graphMap.get(destID).stationID.toLowerCase(), destID.toLowerCase())) {
             graphMap.get(destID).edge = null;
         }
         FileManager.INSTANCE.saveGraphToFile();
@@ -52,12 +52,12 @@ public class Graph {
 
     public void updateEdgeStatus(String stationID, boolean isWorking) {
         for (Vertex v: graphMap.values()) {
-            if (!Objects.equals(v.stationID, stationID)) continue;
+            if (!Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) continue;
             v.edge.forEach(edge -> edge.isActive = isWorking);
         }
         graphMap.forEach((k, vertex) -> {
             for (Edge edge: vertex.edge) {
-                if (Objects.equals(edge.destID, stationID)) edge.isActive = isWorking;
+                if (Objects.equals(edge.destID.toLowerCase(), stationID.toLowerCase())) edge.isActive = isWorking;
             }
         });
         FileManager.INSTANCE.saveGraphToFile();
@@ -88,7 +88,7 @@ class Edge {
     }
 
     public String getIDByName(Collection<Vertex> vertex) {
-        return Objects.requireNonNull(vertex.stream().filter(v -> Objects.equals(v.stationID, destID)).findFirst().orElse(null)).stationName;
+        return Objects.requireNonNull(vertex.stream().filter(v -> Objects.equals(v.stationID.toLowerCase(), destID.toLowerCase())).findFirst().orElse(null)).stationName;
     }
 }
 

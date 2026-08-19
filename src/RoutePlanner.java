@@ -5,9 +5,9 @@ public class RoutePlanner {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter origin station: ");
-        String originName = scanner.nextLine();
+        String originName = scanner.nextLine().trim();
         System.out.print("Enter destination station: ");
-        String destName = scanner.nextLine();
+        String destName = scanner.nextLine().trim();
 
         Vertex originVertex = findVertexByName(graph, originName);
         Vertex destVertex = findVertexByName(graph, destName);
@@ -46,7 +46,7 @@ public class RoutePlanner {
             String currentID = item.id;
             double currentTime = item.time;
 
-            if (currentID.equals(destinationID)) {
+            if (currentID.equalsIgnoreCase(destinationID)) {
                 break;
             }
 
@@ -90,7 +90,7 @@ public class RoutePlanner {
         List<String> path = new ArrayList<>();
         String currentID = destinationID;
 
-        while (!currentID.equals(originID)) {
+        while (!currentID.equalsIgnoreCase(originID)) {
             path.add(0, currentID);
             currentID = parent.get(currentID);
         }
@@ -134,21 +134,21 @@ public class RoutePlanner {
 
     private Vertex findVertexByName(Map<String, Vertex> graph, String name) {
         for (Vertex v : graph.values()) {
-            if (v.stationName.equals(name)) return v;
+            if (v.stationName.equalsIgnoreCase(name)) return v;
         }
         return null;
     }
 
     private Vertex findVertexByID(Map<String, Vertex> graph, String id) {
         for (Vertex v : graph.values()) {
-            if (v.stationID.equals(id)) return v;
+            if (v.stationID.equalsIgnoreCase(id)) return v;
         }
         return null;
     }
 
     private Edge findEdgeByDestID(Vertex vertex, String destID) {
         for (Edge e : vertex.edge) {
-            if (e.destID.equals(destID)) return e;
+            if (e.destID.equalsIgnoreCase(destID)) return e;
         }
         return null;
     }
