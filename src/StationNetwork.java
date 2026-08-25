@@ -19,7 +19,7 @@ public class StationNetwork {
                 System.out.println(Main.BOLD + Main.RED + "Warning! Station Closed For Maintenance!" + Main.RESET);
             }
             System.out.println("Connected Stations: ");
-            if (vertex.edge.isEmpty()) {
+            if (vertex.edge == null || vertex.edge.isEmpty()) {
                 System.out.println("No Connections!");
             } else {
                 for (Edge edge : vertex.edge) {
