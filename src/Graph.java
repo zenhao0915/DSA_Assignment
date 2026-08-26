@@ -101,11 +101,24 @@ public class Graph {
             System.out.println("[Error] Destination Station Does Not Exist!");
             return;
         }
+
+        boolean edgeRemoved = false;
+
         if (graphMap.get(actualStationID).edge != null) {
-            graphMap.get(actualStationID).edge.removeIf(e -> e.destID.equalsIgnoreCase(destID));
+
+            if (graphMap.get(actualStationID).edge.removeIf(e -> e.destID.equalsIgnoreCase(actualDestID))) {
+                edgeRemoved = true;
+            }
         }
         if (graphMap.get(actualDestID).edge != null) {
-            graphMap.get(actualDestID).edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
+            if (graphMap.get(actualDestID).edge.removeIf(e -> e.destID.equalsIgnoreCase(actualStationID))) {
+                edgeRemoved = true;
+            }
+        }
+
+        if (!edgeRemoved) {
+            System.out.println("[Error] No Connection Exists Between These Two Stations!");
+            return;
         }
 
         FileManager.INSTANCE.saveGraphToFile();
