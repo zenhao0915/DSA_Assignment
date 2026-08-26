@@ -69,7 +69,7 @@ public class RoutePlanner {
             }
 
             Vertex currentVertex = findVertexByID(graph, currentID);
-            if (currentVertex == null || !currentVertex.isWorking) continue;
+            if (currentVertex == null || !currentVertex.isWorking || currentVertex.edge == null) continue;
 
             for (Edge edge : currentVertex.edge) {
                 if (!edge.isActive) continue;
@@ -151,6 +151,7 @@ public class RoutePlanner {
     }
 
     private Edge findEdgeByDestID(Vertex vertex, String destID) {
+        if (vertex.edge == null) return null;
         for (Edge e : vertex.edge) {
             if (e.destID.equalsIgnoreCase(destID)) return e;
         }

@@ -33,6 +33,10 @@ public class Graph {
         }
         Edge toDest = new Edge(destID, time, true);
         Edge toSource = new Edge(stationID, time, true);
+        List<Edge> stationIDEdge = graphMap.get(stationID).edge;
+        List<Edge> destIDEdge = graphMap.get(destID).edge;
+        if (stationIDEdge == null) graphMap.get(stationID).edge = new ArrayList<>();
+        if (destIDEdge == null) graphMap.get(destID).edge = new ArrayList<>();
         graphMap.get(stationID).edge.add(toDest);
         graphMap.get(destID).edge.add(toSource);
         FileManager.INSTANCE.saveGraphToFile();
@@ -81,9 +85,11 @@ public class Graph {
         }
         for (Vertex v: graphMap.values()) {
             if (!Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) continue;
+            if (v.edge == null) continue;
             v.edge.forEach(edge -> edge.isActive = isWorking);
         }
         graphMap.forEach((k, vertex) -> {
+            if (vertex.edge == null) return;
             for (Edge edge: vertex.edge) {
                 if (Objects.equals(edge.destID.toLowerCase(), stationID.toLowerCase())) edge.isActive = isWorking;
             }
