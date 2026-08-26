@@ -13,11 +13,12 @@ public class FileManager {
             file.createNewFile();
             Graph.graphMap.forEach((k, v) -> {
                 StringBuilder edgeString = new StringBuilder();
-                if (v.edge == null) return;
-                v.edge.forEach(edge -> {
-                    edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive)
-                            .append("/");// To Split If More Than 1 Edge
-                });
+                if (v.edge != null) {
+                    v.edge.forEach(edge -> {
+                        edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive)
+                                .append("/");// To Split If More Than 1 Edge
+                    });
+                }
                 writeDataToFile(file, v.stationID, v.stationName, String.valueOf(v.isWorking), edgeString.toString());
             });
         } catch (Exception e) {

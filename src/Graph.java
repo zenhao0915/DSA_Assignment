@@ -57,11 +57,11 @@ public class Graph {
 
     public void removeEdge(String stationID, String destID) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println("[Error] Start Station ID Is Empty!");
             return;
         }
         if (destID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println("[Error] Destination Station ID Is Empty!");
             return;
         }
         if (graphMap.get(stationID) != null && Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
