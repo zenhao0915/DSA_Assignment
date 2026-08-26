@@ -30,6 +30,7 @@ public class FileManager {
     public Map<String, Vertex> loadGraphFromFile() {
         Map<String, Vertex> tempGraphMap = new HashMap<>();
         File file = new File("metro.txt");
+        if(!file.exists()) return tempGraphMap;
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNextLine()) {
