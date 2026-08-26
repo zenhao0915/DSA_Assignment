@@ -13,6 +13,7 @@ public class FileManager {
             file.createNewFile();
             Graph.graphMap.forEach((k, v) -> {
                 StringBuilder edgeString = new StringBuilder();
+                if (v.edge == null) return;
                 v.edge.forEach(edge -> {
                     edgeString.append(edge.destID).append(":").append(edge.timeCost).append(":").append(edge.isActive)
                             .append("/");// To Split If More Than 1 Edge
@@ -21,7 +22,7 @@ public class FileManager {
             });
         } catch (Exception e) {
             System.out.println("[Error] File I/O Caused Unexpected Error!");
-            e.fillInStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -48,7 +49,7 @@ public class FileManager {
             }
             reader.close();
         } catch (Exception e) {
-            e.fillInStackTrace();
+            e.printStackTrace();
         }
         return tempGraphMap;
 
@@ -63,7 +64,7 @@ public class FileManager {
                 writeDataToFile(file, u.userName(), u.password(), String.valueOf(u.isAdmin()));
             }
         } catch (Exception e) {
-            e.fillInStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -82,7 +83,7 @@ public class FileManager {
             }
             reader.close();
         } catch (Exception e) {
-            e.fillInStackTrace();
+            e.printStackTrace();
         }
         return userSets;
     }
@@ -101,7 +102,7 @@ public class FileManager {
             writer.newLine();
             writer.flush();
         } catch (Exception e) {
-            e.fillInStackTrace();
+            e.printStackTrace();
         }
     }
 }
