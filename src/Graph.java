@@ -45,22 +45,28 @@ public class Graph {
     }
 
     public boolean removeVertex(String stationID) {
-        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase()))) {
-            System.out.println("[Error] Station Does Not Exists!");
-            return false;
-        }
         if (stationID.isEmpty()) {
             System.out.println("[Error] Station ID Is Empty!");
             return false;
         }
 
+        String actualStationID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(stationID))
+                .findFirst()
+                .orElse(null);
+
+        if (actualStationID == null) {
+            System.out.println("[Error] Station Does Not Exists!");
+            return false;
+        }
+
         for (Vertex v : graphMap.values()) {
             if (v.edge != null) {
-                v.edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
+                v.edge.removeIf(e -> e.destID.equalsIgnoreCase(actualStationID));
             }
         }
 
-        graphMap.remove(stationID);
+        graphMap.remove(actualStationID);
 
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station And Associated Connections Deleted Successfully!");
@@ -76,20 +82,32 @@ public class Graph {
             System.out.println("[Error] Destination Station ID Is Empty!");
             return;
         }
-        if (graphMap.get(stationID) == null) {
+
+        String actualStationID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(stationID))
+                .findFirst()
+                .orElse(null);
+
+        String actualDestID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(destID))
+                .findFirst()
+                .orElse(null);
+
+        if (actualStationID == null) {
             System.out.println("[Error] Start Station Does Not Exist!");
             return;
         }
-        if (graphMap.get(destID) == null) {
+        if (actualDestID == null) {
             System.out.println("[Error] Destination Station Does Not Exist!");
             return;
         }
-        if (graphMap.get(stationID).edge != null) {
-            graphMap.get(stationID).edge.removeIf(e -> e.destID.equalsIgnoreCase(destID));
+        if (graphMap.get(actualStationID).edge != null) {
+            graphMap.get(actualStationID).edge.removeIf(e -> e.destID.equalsIgnoreCase(destID));
         }
-        if (graphMap.get(destID).edge != null) {
-            graphMap.get(destID).edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
+        if (graphMap.get(actualDestID).edge != null) {
+            graphMap.get(actualDestID).edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
         }
+
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Connection Successfully Removed!");
     }
