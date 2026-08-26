@@ -53,7 +53,15 @@ public class Graph {
             System.out.println("[Error] Station ID Is Empty!");
             return false;
         }
+
+        for (Vertex v : graphMap.values()) {
+            if (v.edge != null) {
+                v.edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
+            }
+        }
+
         graphMap.remove(stationID);
+
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station And Associated Connections Deleted Successfully!");
         return true;
@@ -76,11 +84,11 @@ public class Graph {
             System.out.println("[Error] Destination Station Does Not Exist!");
             return;
         }
-        if (Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
-            graphMap.get(stationID).edge = null;
+        if (graphMap.get(stationID).edge != null) {
+            graphMap.get(stationID).edge.removeIf(e -> e.destID.equalsIgnoreCase(destID));
         }
-        if (Objects.equals(graphMap.get(destID).stationID.toLowerCase(), destID.toLowerCase())) {
-            graphMap.get(destID).edge = null;
+        if (graphMap.get(destID).edge != null) {
+            graphMap.get(destID).edge.removeIf(e -> e.destID.equalsIgnoreCase(stationID));
         }
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Connection Successfully Removed!");
