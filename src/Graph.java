@@ -68,10 +68,18 @@ public class Graph {
             System.out.println("[Error] Destination Station ID Is Empty!");
             return;
         }
-        if (graphMap.get(stationID) != null && Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
+        if (graphMap.get(stationID) == null) {
+            System.out.println("[Error] Start Station Does Not Exist!");
+            return;
+        }
+        if (graphMap.get(destID) == null) {
+            System.out.println("[Error] Destination Station Does Not Exist!");
+            return;
+        }
+        if (Objects.equals(graphMap.get(stationID).stationID.toLowerCase(), stationID.toLowerCase())) {
             graphMap.get(stationID).edge = null;
         }
-        if (graphMap.get(destID) != null && Objects.equals(graphMap.get(destID).stationID.toLowerCase(), destID.toLowerCase())) {
+        if (Objects.equals(graphMap.get(destID).stationID.toLowerCase(), destID.toLowerCase())) {
             graphMap.get(destID).edge = null;
         }
         FileManager.INSTANCE.saveGraphToFile();
@@ -83,14 +91,14 @@ public class Graph {
             System.out.println("[Error] Station ID Is Empty!");
             return;
         }
-        for (Vertex v: graphMap.values()) {
+        for (Vertex v : graphMap.values()) {
             if (!Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) continue;
             if (v.edge == null) continue;
             v.edge.forEach(edge -> edge.isActive = isWorking);
         }
         graphMap.forEach((k, vertex) -> {
             if (vertex.edge == null) return;
-            for (Edge edge: vertex.edge) {
+            for (Edge edge : vertex.edge) {
                 if (Objects.equals(edge.destID.toLowerCase(), stationID.toLowerCase())) edge.isActive = isWorking;
             }
         });
