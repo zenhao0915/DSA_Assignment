@@ -6,31 +6,32 @@ record User(String userName, String password, boolean isAdmin) {
     public static User currentUser = null;
 
     public static User getUserByName(String userName) {
-        return userDatabase.stream().filter(u -> u.userName.equalsIgnoreCase(userName)).findFirst().orElse(null);
+        if (userName == null) return null;
+        return userDatabase.stream()
+                .filter(u -> u.userName() != null && u.userName().equalsIgnoreCase(userName))
+                .findFirst()
+                .orElse(null);
     }
 
     public boolean isUserExist() {
-        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName.toLowerCase(), userName.toLowerCase()));
+        if (userName == null) return false;
+        return userDatabase.stream()
+                .anyMatch(u -> u.userName() != null && u.userName().equalsIgnoreCase(userName));
     }
 
     public boolean isValid() {
-        return userDatabase.stream().anyMatch(u -> Objects.equals(u.userName.toLowerCase(), userName.toLowerCase()) && Objects.equals(u.password.toLowerCase(), password.toLowerCase()));
-        //check if in user list the user has the correct name and password (valid user in userList)
+        if (userName == null || password == null) return false;
+        return userDatabase.stream()
+                .anyMatch(u -> u.userName() != null && u.userName().equalsIgnoreCase(userName) && Objects.equals(u.password(), password));
     }
 
     public boolean isValidChar(String content) {
-        return !content.contains("\\") && !content.isEmpty();
+        return content != null && !content.contains("\\") && !content.isEmpty();
     }
 
     public boolean isUserAdmin() {
-        boolean found = false;
-        for (User u : userDatabase) {           //userName de getter
-            if (u.isAdmin && Objects.equals(u.userName.toLowerCase(), userName().toLowerCase())) {
-                found = true;
-                break;   // so it won't check the rest of the userList
-            }
-        }
-        return found;
-
+        if (userName == null) return false;
+        return userDatabase.stream() //userName de getter
+                .anyMatch(u -> u.isAdmin() && u.userName() != null && u.userName().equalsIgnoreCase(userName));
     }
 }
