@@ -13,6 +13,16 @@ public class Graph {
             System.out.println("[Error] Station ID Is Empty!");
             return false;
         }
+
+        if (stationName.isEmpty()){
+            System.out.println("[Error] Station Name Is Empty!");
+            return false;
+        }
+
+        if (!isWorking){
+            System.out.println("[Error] Status Is Empty!");
+            return false;
+        }
         graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station Added Successfully!");
@@ -22,11 +32,11 @@ public class Graph {
     public boolean addEdge(String stationID, String destID, int time) {
         // 1. Check for empty inputs FIRST
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println("[Error] Starting Station ID Is Empty!");
             return false;
         }
         if (destID.isEmpty()) {
-            System.out.println("[Error] Destination ID Is Empty!");
+            System.out.println("[Error] Destination Station ID Is Empty!");
             return false;
         }
 
@@ -96,7 +106,7 @@ public class Graph {
 
     public void removeEdge(String stationID, String destID) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Start Station ID Is Empty!");
+            System.out.println("[Error] Starting Station ID Is Empty!");
             return;
         }
         if (destID.isEmpty()) {
@@ -115,7 +125,7 @@ public class Graph {
                 .orElse(null);
 
         if (actualStationID == null) {
-            System.out.println("[Error] Start Station Does Not Exist!");
+            System.out.println("[Error] Starting Station Does Not Exist!");
             return;
         }
         if (actualDestID == null) {
