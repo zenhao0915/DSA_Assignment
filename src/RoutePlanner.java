@@ -43,6 +43,16 @@ public class RoutePlanner {
     }
 
     public List<String> findRouteByBFS(Map<String, Vertex> graph, String originID, String destinationID) {
+        Vertex startNode = findVertexByID(graph, originID);
+        Vertex endNode = findVertexByID(graph, destinationID);
+
+        if (startNode == null || endNode == null) {
+            return new ArrayList<>();
+        }
+
+        String canonicalOriginID = startNode.stationID;
+        String canonicalDestID = endNode.stationID;
+
         Map<String, Double> distance = new HashMap<>();
         Map<String, String> parent = new HashMap<>();
         PriorityQueue<PQItem> PQ = new PriorityQueue<>(Comparator.comparingDouble(a -> a.time));
@@ -52,15 +62,15 @@ public class RoutePlanner {
             parent.put(vertex.stationID, null);
         }
 
-        distance.put(originID, 0.0);
-        PQ.add(new PQItem(originID, 0.0));
+        distance.put(canonicalOriginID, 0.0);
+        PQ.add(new PQItem(canonicalOriginID, 0.0));
 
         while (!PQ.isEmpty()) {
             PQItem item = PQ.poll();
             String currentID = item.id;
             double currentTime = item.time;
 
-            if (currentID.equalsIgnoreCase(destinationID)) {
+            if (currentID.equalsIgnoreCase(canonicalDestID)) {
                 break;
             }
 
@@ -77,33 +87,36 @@ public class RoutePlanner {
                 Vertex neighborVertex = findVertexByID(graph, edge.destID);
                 if (neighborVertex == null || !neighborVertex.isWorking) continue;
 
+                String neighborCanonicalID = neighborVertex.stationID;
                 double newTime = distance.get(currentID) + edge.timeCost;
 
-                if (newTime < distance.get(edge.destID)) {
-                    distance.put(edge.destID, newTime);
-                    parent.put(edge.destID, currentID);
-                    PQ.add(new PQItem(edge.destID, newTime));
+                if (newTime < distance.get(neighborCanonicalID)) {
+                    distance.put(neighborCanonicalID, newTime);
+                    parent.put(neighborCanonicalID, currentID);
+                    PQ.add(new PQItem(neighborCanonicalID, newTime));
                 }
             }
         }
 
-        if (distance.get(destinationID) == Double.POSITIVE_INFINITY) {
+        if (distance.get(canonicalDestID) == Double.POSITIVE_INFINITY) {
             return new ArrayList<>();
         }
 
-        return reconstructPath(parent, originID, destinationID);
+        return reconstructPath(parent, canonicalOriginID, canonicalDestID);
     }
 
     public List<String> reconstructPath(Map<String, String> parent, String originID, String destinationID) {
         List<String> path = new ArrayList<>();
         String currentID = destinationID;
 
-        while (!currentID.equalsIgnoreCase(originID)) {
+        while (currentID != null && !currentID.equalsIgnoreCase(originID)) {
             path.add(0, currentID);
             currentID = parent.get(currentID);
         }
 
-        path.add(0, originID);
+        if (currentID != null) {
+            path.add(0, originID);
+        }
         return path;
     }
 
@@ -137,23 +150,25 @@ public class RoutePlanner {
     }
 
     private Vertex findVertexByName(Map<String, Vertex> graph, String name) {
+        if (name == null) return null;
         for (Vertex v : graph.values()) {
-            if (v.stationName.equalsIgnoreCase(name)) return v;
+            if (v.stationName != null && v.stationName.equalsIgnoreCase(name)) return v;
         }
         return null;
     }
 
     private Vertex findVertexByID(Map<String, Vertex> graph, String id) {
+        if (id == null) return null;
         for (Vertex v : graph.values()) {
-            if (v.stationID.equalsIgnoreCase(id)) return v;
+            if (v.stationID != null && v.stationID.equalsIgnoreCase(id)) return v;
         }
         return null;
     }
 
     private Edge findEdgeByDestID(Vertex vertex, String destID) {
-        if (vertex.edge == null) return null;
+        if (vertex == null || vertex.edge == null || destID == null) return null;
         for (Edge e : vertex.edge) {
-            if (e.destID.equalsIgnoreCase(destID)) return e;
+            if (e.destID != null && e.destID.equalsIgnoreCase(destID)) return e;
         }
         return null;
     }
