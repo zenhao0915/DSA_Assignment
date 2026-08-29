@@ -19,10 +19,7 @@ public class Graph {
     }
 
     public boolean addEdge(String stationID, String destID, int time) {
-        if (graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) || graphMap.values().stream().noneMatch(v -> Objects.equals(v.stationID.toLowerCase(), destID.toLowerCase()))) {
-            System.out.println("[Error] One/Two Of The Station Do Not Exists!");
-            return false;
-        }
+        // 1. Check for empty inputs FIRST
         if (stationID.isEmpty()) {
             System.out.println("[Error] Station ID Is Empty!");
             return false;
@@ -31,14 +28,37 @@ public class Graph {
             System.out.println("[Error] Destination ID Is Empty!");
             return false;
         }
-        Edge toDest = new Edge(destID, time, true);
-        Edge toSource = new Edge(stationID, time, true);
-        List<Edge> stationIDEdge = graphMap.get(stationID).edge;
-        List<Edge> destIDEdge = graphMap.get(destID).edge;
-        if (stationIDEdge == null) graphMap.get(stationID).edge = new ArrayList<>();
-        if (destIDEdge == null) graphMap.get(destID).edge = new ArrayList<>();
-        graphMap.get(stationID).edge.add(toDest);
-        graphMap.get(destID).edge.add(toSource);
+
+        // 2. Safely find the actual case-matching keys in the graphMap
+        String actualStationID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(stationID))
+                .findFirst()
+                .orElse(null);
+
+        String actualDestID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(destID))
+                .findFirst()
+                .orElse(null);
+
+        // 3. Now check if they actually exist
+        if (actualStationID == null || actualDestID == null) {
+            System.out.println("[Error] One/Two Of The Station Do Not Exists!");
+            return false;
+        }
+
+        // 4. Create edges using the safely matched IDs
+        Edge toDest = new Edge(actualDestID, time, true);
+        Edge toSource = new Edge(actualStationID, time, true);
+
+        List<Edge> stationIDEdge = graphMap.get(actualStationID).edge;
+        List<Edge> destIDEdge = graphMap.get(actualDestID).edge;
+
+        if (stationIDEdge == null) graphMap.get(actualStationID).edge = new ArrayList<>();
+        if (destIDEdge == null) graphMap.get(actualDestID).edge = new ArrayList<>();
+
+        graphMap.get(actualStationID).edge.add(toDest);
+        graphMap.get(actualDestID).edge.add(toSource);
+
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Connection Successfully Created!");
         return true;

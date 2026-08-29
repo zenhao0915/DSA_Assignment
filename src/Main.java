@@ -178,12 +178,27 @@ public class Main {
         String srcID = scanner.nextLine().trim();
         System.out.print("Enter Destination Station ID: ");
         String destID = scanner.nextLine().trim();
+
         System.out.print("Enter Journey Time (minutes): ");
-        int time = Integer.parseInt(scanner.nextLine());
+        String timeInput = scanner.nextLine().trim();
+
+        // 1. Check if the user left the time blank
+        if (timeInput.isEmpty()) {
+            System.out.println("[Error] Journey Time cannot be empty!");
+            return; // Stops execution and brings user back to the menu
+        }
+
+        int time;
+        // 2. Try to convert the string to an integer safely
+        try {
+            time = Integer.parseInt(timeInput);
+        } catch (NumberFormatException e) {
+            System.out.println("[Error] Journey Time must be a valid number!");
+            return; // Stops execution if they typed letters/symbols
+        }
 
         graphManager.addEdge(srcID, destID, time);
     }
-
     private static void handleRemoveVertex() {
         System.out.println("\n== Delete Station ==");
         System.out.print("Enter Station ID to remove: ");
