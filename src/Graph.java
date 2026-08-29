@@ -4,7 +4,8 @@ public class Graph {
     public static Map<String, Vertex> graphMap = new HashMap<>();
 
     public boolean addVertex(String stationID, String stationName, boolean isWorking) {
-        if (graphMap.values().stream().anyMatch(v -> Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase()))) {
+
+        if (graphMap.values().stream().anyMatch(v -> v.stationID.equalsIgnoreCase(stationID))) {
             System.out.println("[Error] Station Already Exists!");
             return false;
         }
@@ -151,14 +152,16 @@ public class Graph {
             return;
         }
         for (Vertex v : graphMap.values()) {
-            if (!Objects.equals(v.stationID.toLowerCase(), stationID.toLowerCase())) continue;
+            // Updated to use equalsIgnoreCase
+            if (!v.stationID.equalsIgnoreCase(stationID)) continue;
             if (v.edge == null) continue;
             v.edge.forEach(edge -> edge.isActive = isWorking);
         }
         graphMap.forEach((k, vertex) -> {
             if (vertex.edge == null) return;
             for (Edge edge : vertex.edge) {
-                if (Objects.equals(edge.destID.toLowerCase(), stationID.toLowerCase())) edge.isActive = isWorking;
+                // Updated to use equalsIgnoreCase
+                if (edge.destID.equalsIgnoreCase(stationID)) edge.isActive = isWorking;
             }
         });
         FileManager.INSTANCE.saveGraphToFile();
@@ -170,13 +173,24 @@ public class Graph {
             System.out.println("[Error] Station ID Is Empty!");
             return false;
         }
-        Vertex currentVertex = graphMap.get(stationID);
-        if (currentVertex == null) {
+
+        // Safely capture the exact key to prevent null errors on case mismatch
+        String actualStationID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(stationID))
+                .findFirst()
+                .orElse(null);
+
+        if (actualStationID == null) {
             System.out.println("[Error] Station Does Not Exists!");
             return false;
         }
+
+        // Use the safely captured actualStationID
+        Vertex currentVertex = graphMap.get(actualStationID);
         currentVertex.isWorking = isWorking;
-        updateEdgeStatus(stationID, isWorking);
+
+        // Pass the safe ID down to the edge updater as well
+        updateEdgeStatus(actualStationID, isWorking);
         return true;
     }
 }
@@ -193,10 +207,13 @@ class Edge {
     }
 
     public String getIDByName(Collection<Vertex> vertex) {
-        return Objects.requireNonNull(vertex.stream().filter(v -> Objects.equals(v.stationID.toLowerCase(), destID.toLowerCase())).findFirst().orElse(null)).stationName;
+        // Updated to use equalsIgnoreCase
+        return Objects.requireNonNull(vertex.stream()
+                .filter(v -> v.stationID.equalsIgnoreCase(destID))
+                .findFirst()
+                .orElse(null)).stationName;
     }
 }
-
 class Vertex {
     public String stationID;
     public String stationName;
