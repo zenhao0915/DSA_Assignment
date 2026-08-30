@@ -11,7 +11,7 @@ public class RoutePlanner {
         String destName = scanner.nextLine().trim();
 
         if (originName.equalsIgnoreCase(destName)) {
-            System.out.println(Main.RED + "[Error] Duplicated Station Found!" + Main.RESET);
+            System.out.println(Main.RED + "[Error] Start and End Destination Cannot be the same!" + Main.RESET);
             return;
         }
 
