@@ -14,15 +14,15 @@ public class Graph {
             return false;
         }
 
-        if (stationName.isEmpty()){
+        if (stationName.isEmpty()) {
             System.out.println("[Error] Station Name Is Empty!");
             return false;
         }
 
-        if (!isWorking){
-            System.out.println("[Error] Status Is Empty!");
-            return false;
-        }
+//        if (!isWorking) {
+//            System.out.println("[Error] Status Is Empty!");
+//            return false;
+//        }
         graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Station Added Successfully!");
@@ -41,15 +41,9 @@ public class Graph {
         }
 
         // 2. Safely find the actual case-matching keys in the graphMap
-        String actualStationID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(stationID))
-                .findFirst()
-                .orElse(null);
+        String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
-        String actualDestID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(destID))
-                .findFirst()
-                .orElse(null);
+        String actualDestID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(destID)).findFirst().orElse(null);
 
         // 3. Now check if they actually exist
         if (actualStationID == null || actualDestID == null) {
@@ -81,10 +75,7 @@ public class Graph {
             return false;
         }
 
-        String actualStationID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(stationID))
-                .findFirst()
-                .orElse(null);
+        String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
             System.out.println("[Error] Station Does Not Exists!");
@@ -114,15 +105,9 @@ public class Graph {
             return;
         }
 
-        String actualStationID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(stationID))
-                .findFirst()
-                .orElse(null);
+        String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
-        String actualDestID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(destID))
-                .findFirst()
-                .orElse(null);
+        String actualDestID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(destID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
             System.out.println("[Error] Starting Station Does Not Exist!");
@@ -185,10 +170,7 @@ public class Graph {
         }
 
         // Safely capture the exact key to prevent null errors on case mismatch
-        String actualStationID = graphMap.keySet().stream()
-                .filter(k -> k.equalsIgnoreCase(stationID))
-                .findFirst()
-                .orElse(null);
+        String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
             System.out.println("[Error] Station Does Not Exists!");
@@ -218,12 +200,10 @@ class Edge {
 
     public String getIDByName(Collection<Vertex> vertex) {
         // Updated to use equalsIgnoreCase
-        return Objects.requireNonNull(vertex.stream()
-                .filter(v -> v.stationID.equalsIgnoreCase(destID))
-                .findFirst()
-                .orElse(null)).stationName;
+        return Objects.requireNonNull(vertex.stream().filter(v -> v.stationID.equalsIgnoreCase(destID)).findFirst().orElse(null)).stationName;
     }
 }
+
 class Vertex {
     public String stationID;
     public String stationName;

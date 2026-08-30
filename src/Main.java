@@ -182,19 +182,17 @@ public class Main {
         System.out.print("Enter Journey Time (minutes): ");
         String timeInput = scanner.nextLine().trim();
 
-        // 1. Check if the user left the time blank
         if (timeInput.isEmpty()) {
             System.out.println("[Error] Journey Time cannot be empty!");
-            return; // Stops execution and brings user back to the menu
+            return;
         }
 
         int time;
-        // 2. Try to convert the string to an integer safely
         try {
             time = Integer.parseInt(timeInput);
         } catch (NumberFormatException e) {
             System.out.println("[Error] Journey Time must be a valid number!");
-            return; // Stops execution if they typed letters/symbols
+            return;
         }
 
         graphManager.addEdge(srcID, destID, time);

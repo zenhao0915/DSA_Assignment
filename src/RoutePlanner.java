@@ -10,6 +10,11 @@ public class RoutePlanner {
         System.out.print(Main.YELLOW + "Enter destination station ID: " + Main.RESET);
         String destName = scanner.nextLine().trim();
 
+        if (originName.equalsIgnoreCase(destName)) {
+            System.out.println(Main.RED + "[Error] Duplicated Station Found!" + Main.RESET);
+            return;
+        }
+
         Vertex originVertex = findVertexByID(graph, originName);
         Vertex destVertex = findVertexByID(graph, destName);
 
