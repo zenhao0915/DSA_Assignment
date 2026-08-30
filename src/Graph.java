@@ -30,7 +30,6 @@ public class Graph {
     }
 
     public boolean addEdge(String stationID, String destID, int time) {
-        // 1. Check for empty inputs FIRST
         if (stationID.isEmpty()) {
             System.out.println("[Error] Starting Station ID Is Empty!");
             return false;
@@ -40,29 +39,45 @@ public class Graph {
             return false;
         }
 
-        // 2. Safely find the actual case-matching keys in the graphMap
-        String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
+        String actualStationID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(stationID))
+                .findFirst()
+                .orElse(null);
 
-        String actualDestID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(destID)).findFirst().orElse(null);
+        String actualDestID = graphMap.keySet().stream()
+                .filter(k -> k.equalsIgnoreCase(destID))
+                .findFirst()
+                .orElse(null);
 
-        // 3. Now check if they actually exist
         if (actualStationID == null || actualDestID == null) {
             System.out.println("[Error] One/Two Of The Station Do Not Exists!");
             return false;
         }
 
-        // 4. Create edges using the safely matched IDs
-        Edge toDest = new Edge(actualDestID, time, true);
-        Edge toSource = new Edge(actualStationID, time, true);
+        if (actualStationID.equalsIgnoreCase(actualDestID)) {
+            System.out.println("[Error] Cannot connect a station to itself!");
+            return false;
+        }
 
-        List<Edge> stationIDEdge = graphMap.get(actualStationID).edge;
-        List<Edge> destIDEdge = graphMap.get(actualDestID).edge;
+        Vertex sourceVertex = graphMap.get(actualStationID);
+        Vertex destVertex = graphMap.get(actualDestID);
 
-        if (stationIDEdge == null) graphMap.get(actualStationID).edge = new ArrayList<>();
-        if (destIDEdge == null) graphMap.get(actualDestID).edge = new ArrayList<>();
+        if (sourceVertex.edge == null) sourceVertex.edge = new ArrayList<>();
+        if (destVertex.edge == null) destVertex.edge = new ArrayList<>();
 
-        graphMap.get(actualStationID).edge.add(toDest);
-        graphMap.get(actualDestID).edge.add(toSource);
+        boolean alreadyExists = sourceVertex.edge.stream()
+                .anyMatch(e -> e.destID.equalsIgnoreCase(actualDestID));
+        if (alreadyExists) {
+            System.out.println("[Error] Connection between these stations already exists!");
+            return false;
+        }
+        boolean isEdgeActive = sourceVertex.isWorking && destVertex.isWorking;
+
+        Edge toDest = new Edge(actualDestID, time, isEdgeActive);
+        Edge toSource = new Edge(actualStationID, time, isEdgeActive);
+
+        sourceVertex.edge.add(toDest);
+        destVertex.edge.add(toSource);
 
         FileManager.INSTANCE.saveGraphToFile();
         System.out.println("[Success] Connection Successfully Created!");
