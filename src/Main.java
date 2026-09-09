@@ -183,7 +183,7 @@ public class Main {
         String timeInput = scanner.nextLine().trim();
 
         if (timeInput.isEmpty()) {
-            System.out.println("[Error] Journey Time cannot be empty!");
+            System.out.println(BOLD + RED + "[Error] Journey Time cannot be empty!" + RESET);
             return;
         }
 
@@ -191,12 +191,13 @@ public class Main {
         try {
             time = Integer.parseInt(timeInput);
         } catch (NumberFormatException e) {
-            System.out.println("[Error] Journey Time must be a valid number!");
+            System.out.println(BOLD + RED + "[Error] Journey Time must be a valid number!" + RESET);
             return;
         }
 
         graphManager.addEdge(srcID, destID, time);
     }
+
     private static void handleRemoveVertex() {
         System.out.println("\n== Delete Station ==");
         System.out.print("Enter Station ID to remove: ");
@@ -221,10 +222,10 @@ public class Main {
         String id = scanner.nextLine().trim();
         String newStatus;
         while (true) {
-            System.out.print("Enter New Status (" + Main.GREEN + "true" + Main.RESET + " for Active / " + Main.RED + "false" + Main.RESET + " for Maintenance): ");
+            System.out.print("Enter New Status (" + GREEN + "true" + RESET + " for Active / " + RED + "false" + RESET + " for Maintenance): ");
             newStatus = scanner.nextLine().trim();
             if (newStatus.equalsIgnoreCase("true") || newStatus.equalsIgnoreCase("false")) break;
-            System.out.println("[Error] Invalid Input! Try again.");
+            System.out.println(BOLD + RED + "[Error] Invalid Input! Try again." + RESET);
         }
         boolean isWorking = Boolean.parseBoolean(newStatus);
 

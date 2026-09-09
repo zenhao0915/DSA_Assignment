@@ -4,38 +4,39 @@ public class Graph {
     public static Map<String, Vertex> graphMap = new HashMap<>();
 
     public boolean addVertex(String stationID, String stationName, boolean isWorking) {
-
-        if (graphMap.values().stream().anyMatch(v -> v.stationID.equalsIgnoreCase(stationID))) {
-            System.out.println("[Error] Station Already Exists!");
-            return false;
-        }
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station ID Is Empty!" + Main.RESET);
             return false;
         }
-
         if (stationName.isEmpty()) {
-            System.out.println("[Error] Station Name Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station Name Is Empty!" + Main.RESET);
             return false;
         }
-
+        if (graphMap.values().stream().anyMatch(v -> v.stationID.equalsIgnoreCase(stationID))) {
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station Already Exists!" + Main.RESET);
+            return false;
+        }
+        if (graphMap.values().stream().anyMatch(v -> v.stationName.equalsIgnoreCase(stationName))) {
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station Name Already Exists!" + Main.RESET);
+            return false;
+        }
 //        if (!isWorking) {
 //            System.out.println("[Error] Status Is Empty!");
 //            return false;
 //        }
         graphMap.put(stationID, new Vertex(stationID, stationName, isWorking, new ArrayList<>()));
         FileManager.INSTANCE.saveGraphToFile();
-        System.out.println("[Success] Station Added Successfully!");
+        System.out.println(Main.BOLD + Main.GREEN + "[Success] Station Added Successfully!" + Main.RESET);
         return true;
     }
 
     public boolean addEdge(String stationID, String destID, int time) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Starting Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Starting Station ID Is Empty!" + Main.RESET);
             return false;
         }
         if (destID.isEmpty()) {
-            System.out.println("[Error] Destination Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Destination Station ID Is Empty!" + Main.RESET);
             return false;
         }
 
@@ -50,12 +51,12 @@ public class Graph {
                 .orElse(null);
 
         if (actualStationID == null || actualDestID == null) {
-            System.out.println("[Error] One/Two Of The Station Do Not Exists!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] One/Two Of The Station Do Not Exists!" + Main.RESET);
             return false;
         }
 
         if (actualStationID.equalsIgnoreCase(actualDestID)) {
-            System.out.println("[Error] Cannot connect a station to itself!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Cannot connect a station to itself!" + Main.RESET);
             return false;
         }
 
@@ -68,7 +69,7 @@ public class Graph {
         boolean alreadyExists = sourceVertex.edge.stream()
                 .anyMatch(e -> e.destID.equalsIgnoreCase(actualDestID));
         if (alreadyExists) {
-            System.out.println("[Error] Connection between these stations already exists!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Connection between these stations already exists!" + Main.RESET);
             return false;
         }
         boolean isEdgeActive = sourceVertex.isWorking && destVertex.isWorking;
@@ -80,20 +81,20 @@ public class Graph {
         destVertex.edge.add(toSource);
 
         FileManager.INSTANCE.saveGraphToFile();
-        System.out.println("[Success] Connection Successfully Created!");
+        System.out.println(Main.BOLD + Main.GREEN + "[Success] Connection Successfully Created!" + Main.RESET);
         return true;
     }
 
     public boolean removeVertex(String stationID) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station ID Is Empty!" + Main.RESET);
             return false;
         }
 
         String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
-            System.out.println("[Error] Station Does Not Exists!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station Does Not Exists!" + Main.RESET);
             return false;
         }
 
@@ -106,17 +107,17 @@ public class Graph {
         graphMap.remove(actualStationID);
 
         FileManager.INSTANCE.saveGraphToFile();
-        System.out.println("[Success] Station And Associated Connections Deleted Successfully!");
+        System.out.println(Main.BOLD + Main.GREEN + "[Success] Station And Associated Connections Deleted Successfully!" + Main.RESET);
         return true;
     }
 
     public void removeEdge(String stationID, String destID) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Starting Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Starting Station ID Is Empty!" + Main.RESET);
             return;
         }
         if (destID.isEmpty()) {
-            System.out.println("[Error] Destination Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Destination Station ID Is Empty!" + Main.RESET);
             return;
         }
 
@@ -125,11 +126,11 @@ public class Graph {
         String actualDestID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(destID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
-            System.out.println("[Error] Starting Station Does Not Exist!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Starting Station Does Not Exist!" + Main.RESET);
             return;
         }
         if (actualDestID == null) {
-            System.out.println("[Error] Destination Station Does Not Exist!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Destination Station Does Not Exist!" + Main.RESET);
             return;
         }
 
@@ -148,17 +149,17 @@ public class Graph {
         }
 
         if (!edgeRemoved) {
-            System.out.println("[Error] No Connection Exists Between These Two Stations!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] No Connection Exists Between These Two Stations!" + Main.RESET);
             return;
         }
 
         FileManager.INSTANCE.saveGraphToFile();
-        System.out.println("[Success] Connection Successfully Removed!");
+        System.out.println(Main.BOLD + Main.GREEN + "[Success] Connection Successfully Removed!" + Main.RESET);
     }
 
     public void updateEdgeStatus(String stationID, boolean isWorking) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station ID Is Empty!" + Main.RESET);
             return;
         }
         for (Vertex v : graphMap.values()) {
@@ -175,12 +176,12 @@ public class Graph {
             }
         });
         FileManager.INSTANCE.saveGraphToFile();
-        System.out.println("[Success] Update Successful!");
+        System.out.println(Main.BOLD + Main.GREEN + "[Success] Update Successful!" + Main.RESET);
     }
 
     public boolean updateStatus(String stationID, boolean isWorking) {
         if (stationID.isEmpty()) {
-            System.out.println("[Error] Station ID Is Empty!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station ID Is Empty!" + Main.RESET);
             return false;
         }
 
@@ -188,7 +189,7 @@ public class Graph {
         String actualStationID = graphMap.keySet().stream().filter(k -> k.equalsIgnoreCase(stationID)).findFirst().orElse(null);
 
         if (actualStationID == null) {
-            System.out.println("[Error] Station Does Not Exists!");
+            System.out.println(Main.BOLD + Main.RED + "[Error] Station Does Not Exists!" + Main.RESET);
             return false;
         }
 
